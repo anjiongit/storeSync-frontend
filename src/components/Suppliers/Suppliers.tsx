@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, TextField, Typography, Paper, Stack, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@mui/material';
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  Paper,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton
+} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import type { GridColDef } from '@mui/x-data-grid';
 import AddIcon from '@mui/icons-material/Add';
@@ -19,42 +31,14 @@ interface Supplier {
   performance?: number;
 }
 
-const columns: GridColDef[] = [
-  { field: 'name', headerName: 'Name', flex: 1 },
-  { field: 'email', headerName: 'Email', flex: 1, valueGetter: (params: any) => params.row?.contactInfo?.email ?? '' },
-  { field: 'phone', headerName: 'Phone', flex: 1, valueGetter: (params: any) => params.row?.contactInfo?.phone ?? '' },
-  { field: 'reliability', headerName: 'Reliability', flex: 1 },
-  { field: 'performance', headerName: 'Performance', flex: 1 },
-  {
-    field: 'actions',
-    headerName: 'Actions',
-    sortable: false,
-    filterable: false,
-    renderCell: (params: any) => (
-      <>
-        <IconButton color="primary" onClick={() => handleEditOpen(params.row)} size="small">
-          <EditIcon />
-        </IconButton>
-        <IconButton color="error" onClick={() => handleDeleteOpen(params.row._id)} size="small">
-          <DeleteIcon />
-        </IconButton>
-      </>
-    ),
-    flex: 1,
-    minWidth: 120,
-  },
-];
-
-// function handleEditOpen(supplier: Supplier) {}
-// function handleDeleteOpen(id: string) {}
-
 const Suppliers: React.FC = () => {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  // Add state
+
+  // Add Supplier
   const [addOpen, setAddOpen] = useState(false);
   const [addForm, setAddForm] = useState({
     name: '',
@@ -62,10 +46,11 @@ const Suppliers: React.FC = () => {
     phone: '',
     address: '',
     reliability: '',
-    performance: '',
+    performance: ''
   });
   const [addError, setAddError] = useState('');
-  // Edit state
+
+  // Edit Supplier
   const [editOpen, setEditOpen] = useState(false);
   const [editForm, setEditForm] = useState({
     _id: '',
@@ -74,10 +59,11 @@ const Suppliers: React.FC = () => {
     phone: '',
     address: '',
     reliability: '',
-    performance: '',
+    performance: ''
   });
   const [editError, setEditError] = useState('');
-  // Delete state
+
+  // Delete Supplier
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -88,10 +74,11 @@ const Suppliers: React.FC = () => {
       if (search) params.name = search;
       if (email) params.email = email;
       if (phone) params.phone = phone;
+
       const res = await axios.get('/suppliers', { params });
       setSuppliers(res.data);
     } catch (err) {
-      // handle error
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -99,10 +86,8 @@ const Suppliers: React.FC = () => {
 
   useEffect(() => {
     fetchSuppliers();
-    // eslint-disable-next-line
   }, [search, email, phone]);
 
-  // Add
   const handleAddOpen = () => {
     setAddForm({ name: '', email: '', phone: '', address: '', reliability: '', performance: '' });
     setAddError('');
@@ -121,10 +106,10 @@ const Suppliers: React.FC = () => {
         contactInfo: {
           email: addForm.email,
           phone: addForm.phone,
-          address: addForm.address,
+          address: addForm.address
         },
         reliability: Number(addForm.reliability),
-        performance: Number(addForm.performance),
+        performance: Number(addForm.performance)
       });
       handleAddClose();
       fetchSuppliers();
@@ -133,8 +118,7 @@ const Suppliers: React.FC = () => {
     }
   };
 
-  // Edit
-  const _handleEditOpen = (supplier: Supplier) => {
+  const handleEditOpen = (supplier: Supplier) => {
     setEditForm({
       _id: supplier._id,
       name: supplier.name,
@@ -142,7 +126,7 @@ const Suppliers: React.FC = () => {
       phone: supplier.contactInfo?.phone || '',
       address: supplier.contactInfo?.address || '',
       reliability: String(supplier.reliability ?? ''),
-      performance: String(supplier.performance ?? ''),
+      performance: String(supplier.performance ?? '')
     });
     setEditError('');
     setEditOpen(true);
@@ -160,10 +144,10 @@ const Suppliers: React.FC = () => {
         contactInfo: {
           email: editForm.email,
           phone: editForm.phone,
-          address: editForm.address,
+          address: editForm.address
         },
         reliability: Number(editForm.reliability),
-        performance: Number(editForm.performance),
+        performance: Number(editForm.performance)
       });
       handleEditClose();
       fetchSuppliers();
@@ -172,8 +156,7 @@ const Suppliers: React.FC = () => {
     }
   };
 
-  // Delete
-  const _handleDeleteOpen = (id: string) => {
+  const handleDeleteOpen = (id: string) => {
     setDeleteId(id);
     setDeleteOpen(true);
   };
@@ -186,36 +169,88 @@ const Suppliers: React.FC = () => {
       setDeleteId(null);
       fetchSuppliers();
     } catch (err) {
-      // handle error
+      console.error(err);
     }
   };
 
-  // Patch the columns to use the correct handlers
-  columns[5].renderCell = (params: any) => (
-    <>
-      <IconButton color="primary" onClick={() => _handleEditOpen(params.row)} size="small">
-        <EditIcon />
-      </IconButton>
-      <IconButton color="error" onClick={() => _handleDeleteOpen(params.row._id)} size="small">
-        <DeleteIcon />
-      </IconButton>
-    </>
-  );
+  const columns: GridColDef[] = [
+    { field: 'name', headerName: 'Name', flex: 1 },
+    {
+      field: 'email',
+      headerName: 'Email',
+      flex: 1,
+      valueGetter: (params: any) => params.row?.contactInfo?.email ?? ''
+    },
+    {
+      field: 'phone',
+      headerName: 'Phone',
+      flex: 1,
+      valueGetter: (params: any) => params.row?.contactInfo?.phone ?? ''
+    },
+    { field: 'reliability', headerName: 'Reliability', flex: 1 },
+    { field: 'performance', headerName: 'Performance', flex: 1 },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      sortable: false,
+      filterable: false,
+      renderCell: (params: any) => (
+        <>
+          <IconButton color="primary" onClick={() => handleEditOpen(params.row)} size="small">
+            <EditIcon />
+          </IconButton>
+          <IconButton color="error" onClick={() => handleDeleteOpen(params.row._id)} size="small">
+            <DeleteIcon />
+          </IconButton>
+        </>
+      ),
+      flex: 1,
+      minWidth: 120
+    }
+  ];
 
   return (
     <Box>
-      <Typography variant="h5" mb={2}>Suppliers Management</Typography>
+      <Typography variant="h5" mb={2}>
+        Suppliers Management
+      </Typography>
       <Paper sx={{ p: 2, mb: 2 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mb={2}>
-          <TextField label="Search Name" placeholder="Type supplier name..." value={search} onChange={e => setSearch(e.target.value)} size="small" />
-          <TextField label="Email" placeholder="Type email..." value={email} onChange={e => setEmail(e.target.value)} size="small" />
-          <TextField label="Phone" placeholder="Type phone..." value={phone} onChange={e => setPhone(e.target.value)} size="small" />
-          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddOpen}>Add Supplier</Button>
-          <Button variant="outlined" onClick={() => { setSearch(''); setEmail(''); setPhone(''); }}>Clear Filters</Button>
+          <TextField
+            label="Search Name"
+            placeholder="Type supplier name..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            size="small"
+          />
+          <TextField
+            label="Email"
+            placeholder="Type email..."
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            size="small"
+          />
+          <TextField
+            label="Phone"
+            placeholder="Type phone..."
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            size="small"
+          />
+          <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddOpen}>
+            Add Supplier
+          </Button>
+          <Button variant="outlined" onClick={() => {
+            setSearch('');
+            setEmail('');
+            setPhone('');
+          }}>
+            Clear Filters
+          </Button>
         </Stack>
         <div style={{ height: 500, width: '100%' }}>
           <DataGrid
-            rows={suppliers.map(s => ({ ...s, id: s._id }))}
+            rows={suppliers.map((s) => ({ ...s, id: s._id }))}
             columns={columns}
             pagination
             pageSizeOptions={[10, 20, 50]}
@@ -225,7 +260,8 @@ const Suppliers: React.FC = () => {
           />
         </div>
       </Paper>
-      {/* Add Supplier Dialog */}
+
+      {/* Add Dialog */}
       <Dialog open={addOpen} onClose={handleAddClose} maxWidth="xs" fullWidth>
         <DialogTitle>Add New Supplier</DialogTitle>
         <form onSubmit={handleAddSubmit}>
@@ -235,8 +271,8 @@ const Suppliers: React.FC = () => {
               <TextField label="Email" name="email" value={addForm.email} onChange={handleAddChange} fullWidth />
               <TextField label="Phone" name="phone" value={addForm.phone} onChange={handleAddChange} fullWidth />
               <TextField label="Address" name="address" value={addForm.address} onChange={handleAddChange} fullWidth />
-              <TextField label="Reliability" name="reliability" value={addForm.reliability} onChange={handleAddChange} type="number" fullWidth />
-              <TextField label="Performance" name="performance" value={addForm.performance} onChange={handleAddChange} type="number" fullWidth />
+              <TextField label="Reliability" name="reliability" type="number" value={addForm.reliability} onChange={handleAddChange} fullWidth />
+              <TextField label="Performance" name="performance" type="number" value={addForm.performance} onChange={handleAddChange} fullWidth />
               {addError && <Typography color="error">{addError}</Typography>}
             </Stack>
           </DialogContent>
@@ -246,7 +282,8 @@ const Suppliers: React.FC = () => {
           </DialogActions>
         </form>
       </Dialog>
-      {/* Edit Supplier Dialog */}
+
+      {/* Edit Dialog */}
       <Dialog open={editOpen} onClose={handleEditClose} maxWidth="xs" fullWidth>
         <DialogTitle>Edit Supplier</DialogTitle>
         <form onSubmit={handleEditSubmit}>
@@ -256,8 +293,8 @@ const Suppliers: React.FC = () => {
               <TextField label="Email" name="email" value={editForm.email} onChange={handleEditChange} fullWidth />
               <TextField label="Phone" name="phone" value={editForm.phone} onChange={handleEditChange} fullWidth />
               <TextField label="Address" name="address" value={editForm.address} onChange={handleEditChange} fullWidth />
-              <TextField label="Reliability" name="reliability" value={editForm.reliability} onChange={handleEditChange} type="number" fullWidth />
-              <TextField label="Performance" name="performance" value={editForm.performance} onChange={handleEditChange} type="number" fullWidth />
+              <TextField label="Reliability" name="reliability" type="number" value={editForm.reliability} onChange={handleEditChange} fullWidth />
+              <TextField label="Performance" name="performance" type="number" value={editForm.performance} onChange={handleEditChange} fullWidth />
               {editError && <Typography color="error">{editError}</Typography>}
             </Stack>
           </DialogContent>
@@ -267,7 +304,8 @@ const Suppliers: React.FC = () => {
           </DialogActions>
         </form>
       </Dialog>
-      {/* Delete Confirmation Dialog */}
+
+      {/* Delete Dialog */}
       <Dialog open={deleteOpen} onClose={handleDeleteClose} maxWidth="xs" fullWidth>
         <DialogTitle>Delete Supplier</DialogTitle>
         <DialogContent>
@@ -282,4 +320,4 @@ const Suppliers: React.FC = () => {
   );
 };
 
-export default Suppliers; 
+export default Suppliers;
