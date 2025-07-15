@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:5000/api', // Change if backend runs elsewhere
+  baseURL: 'https://storesync-backend1.onrender.com/api', // Change if backend runs elsewhere
 });
 
 // Add a request interceptor to include the token
