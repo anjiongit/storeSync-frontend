@@ -45,8 +45,8 @@ const columns: GridColDef[] = [
   },
 ];
 
-function handleEditOpen(supplier: Supplier) {}
-function handleDeleteOpen(id: string) {}
+// function handleEditOpen(supplier: Supplier) {}
+// function handleDeleteOpen(id: string) {}
 
 const Suppliers: React.FC = () => {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
